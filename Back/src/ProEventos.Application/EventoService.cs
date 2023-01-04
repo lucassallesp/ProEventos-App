@@ -14,7 +14,6 @@ namespace ProEventos.Application
         {
             _eventoPersist = eventoPersist;
             _geralPersist = geralPersist;
-            
         }
         public async Task<Evento> AddEventos(Evento model)
         {

@@ -1,4 +1,4 @@
-# ProEventosApp - Curso da Udemy
+# ProEventosApp - Web Page
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.18.
 

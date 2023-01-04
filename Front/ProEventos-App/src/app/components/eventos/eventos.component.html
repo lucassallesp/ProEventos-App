@@ -1,5 +1,4 @@
-<h2>Eventos</h2>
-<hr>
+<app-titulo [titulo]="'Eventos'"></app-titulo>
 
 <div class="form-inline">
   <div class="form-group mb-2">
@@ -17,6 +16,7 @@
     <tr>
       <th>
         <button class="btn btn-outline-light btn-sm" (click)="changeImage()">
+            <i class="{{isShowing ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
             {{isShowing ? 'Ocultar' : 'Mostrar'}}
         </button>
       </th>
@@ -39,15 +39,19 @@
         [style.margin.px] = "marginValue"
       >
     </td>
-    <td>{{event.eventoId}}</td>
+    <td>{{event.id}}</td>
     <td>{{event.tema}}</td>
     <td>{{event.local}}</td>
-    <td>{{event.dataEvento}}</td>
+    <td>{{event.dataEvento | DateTimeFormat}}</td>
     <td>{{event.qtdPessoas}}</td>
-    <td>{{event.lote}}</td>
+    <td>{{event.lotes[0].nome}}</td>
     <td>
-      <button type="button" class="btn btn-primary btn-sm mr-2">Editar</button>
-      <button type="button" class="btn btn-danger btn-sm mr-2">Excluir</button>
+      <button type="button" class="btn btn-primary btn-sm mr-2" tooltip="Editar">
+        <i class="fa fa-edit"></i>
+      </button>
+      <button type="button" class="btn btn-danger btn-sm mr-2" tooltip="Excluir" (click)="openModal(template)">
+        <i class="fa fa-trash"></i>
+      </button>
     </td>
   </tr>
 </tbody>
@@ -60,3 +64,11 @@
 </tfoot>
 </table>
 <!-- {{events | json}} -->
+
+<ng-template #template>
+  <div class="modal-body text-center">
+    <p>Tem certeza que quer deletar este evento?</p>
+    <button type="button" class="btn btn-default" (click)="confirm()" >Sim</button>
+    <button type="button" class="btn btn-primary" (click)="decline()" >Não</button>
+  </div>
+</ng-template>
