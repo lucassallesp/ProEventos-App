@@ -521,6 +521,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+cd*.Bat
 
 # Exluindo DB
 *.db
