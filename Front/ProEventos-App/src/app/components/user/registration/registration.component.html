@@ -1,5 +1,4 @@
 <div class="row mt-4">
-
 	<div class="col-md-6   d-md-block" style="height: 450px;">
 		<div class="text-center col-md-12 my-auto side-heder">
 			<h1>Cadastro de Usuário</h1>
@@ -9,36 +8,69 @@
 
 	<div class="col-md-6">
 
-		<form class="p-1">
+		<form class="p-1" [formGroup]="form">
       <div class="pb-2 d-block d-md-none">
         <h3 class="border-bottom">Cadastro de Usuário</h3>
       </div>
       <div class="form-row">
         <div class="form-group col-sm-6">
           <label>Primeiro Nome</label>
-          <input type="text" class="form-control" placeholder="Insira o Primeiro nome" />
+          <input type="text" class="form-control" formControlName="primeiroNome" placeholder="Insira o Primeiro nome"
+          [ngClass]="{'is-invalid': fr.primeiroNome.errors && fr.primeiroNome.touched}"/>
+          <div class="invalid-feedback" *ngIf="fr.primeiroNome.errors?.required && fr.primeiroNome.touched">
+            Primeiro nome é obrigatório
+          </div>
         </div>
         <div class="form-group col-sm-6">
           <label>Último nome</label>
-          <input type="text" class="form-control" placeholder="Insira o Último nome" />
+          <input type="text" class="form-control" placeholder="Insira o Último nome" formControlName="ultimoNome"
+          [ngClass]="{'is-invalid': fr.ultimoNome.errors && fr.ultimoNome.touched}"/>
+          <div class="invalid-feedback" *ngIf="fr.ultimoNome.errors?.required && fr.ultimoNome.touched">
+            Último nome é obrigatório
+          </div>
         </div>
       </div>
       <div class="form-group">
         <label for="">Email:</label>
-        <input class="form-control" type="text" placeholder="Insira o Nome Completo" />
+        <input class="form-control" type="text" placeholder="Insira o Nome Completo" formControlName="email"
+        [ngClass]="{'is-invalid': fr.email.errors && fr.email.touched}"/>
+        <div class="invalid-feedback" *ngIf="fr.email.errors?.required && fr.email.touched">
+          O endereço de e-mail é obrigatório
+        </div>
+        <div class="invalid-feedback" *ngIf="fr.email.errors?.email && fr.email.touched">
+          Insira um endereço de e-mail válido
+        </div>
       </div>
       <div class="form-group">
         <label for="">Usuario:</label>
-        <input class="form-control" type="text" placeholder="Insira o nome de Usuário" />
+        <input class="form-control" type="text" placeholder="Insira o nome de Usuário" formControlName="userName"
+        [ngClass]="{'is-invalid': fr.userName.errors && fr.userName.touched}"/>
+        <div class="invalid-feedback" *ngIf="fr.userName.errors?.required && fr.userName.touched">
+          Usuário é um campo obrigatório
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group col-sm-6">
           <label for="">Senha:</label>
-          <input class="form-control" type="password" placeholder="Digite uma Senha" />
+          <input class="form-control" type="password" placeholder="Digite uma Senha" formControlName="senha"
+          [ngClass]="{'is-invalid': fr.senha.errors && fr.senha.touched}"/>
+          <div class="invalid-feedback" *ngIf="fr.senha.errors?.required">
+            Senha é um campo obrigatório
+          </div>
+          <div class="invalid-feedback" *ngIf="fr.senha.errors?.minlength && fr.senha.touched">
+            A senha precisa ter no mínimo 6 caracteres
+          </div>
         </div>
         <div class="form-group col-sm-6">
           <label for="">Confirmar Senha:</label>
-          <input class="form-control" type="password" placeholder="Confirme a Senha" />
+          <input class="form-control" type="password" placeholder="Confirme a Senha" formControlName="confirmaSenha"
+          [ngClass]="{'is-invalid': fr.confirmaSenha.errors && fr.confirmaSenha.touched}"/>
+          <div class="invalid-feedback" *ngIf="fr.confirmaSenha.errors?.required && fr.confirmaSenha.touched">
+            Confirmação da senha é um campo obrigatório
+          </div>
+          <div class="invalid-feedback" *ngIf="fr.confirmaSenha.errors.mustMatch">
+            Senhas precisam ser iguais
+          </div>
         </div>
       </div>
       <div class="form-row p-1 mb-3">
@@ -50,7 +82,7 @@
       <div class="form-row">
         <div class="form-group col-12">
           <button class="btn btn-lg btn-success btn-block px-5">
-            Registar
+            Registrar
           </button>
         </div>
       </div>
