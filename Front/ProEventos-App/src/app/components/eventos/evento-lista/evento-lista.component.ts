@@ -16,6 +16,7 @@ export class EventoListaComponent implements OnInit {
   modalRef = {} as BsModalRef;
   public events: Evento[] = [];
   public filteredEvents: Evento[] = [];
+  public eventoId: number = 0;
 
   public widthValue = 150;
   public marginValue = 2;
@@ -41,7 +42,7 @@ export class EventoListaComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinner.show();
-    this.getEventos();
+    this.loadEvents();
   }
 
   public filterEvents(filterBy: string): Evento[] {
@@ -60,27 +61,41 @@ export class EventoListaComponent implements OnInit {
     this.isShowing = !this.isShowing;
   }
 
-  public getEventos() : void {
+  public loadEvents() : void {
     this.eventoService.getEventos().subscribe({
       next: (eventsResp: Evento[]) => {
         this.events = eventsResp;
         this.filteredEvents = this.events;
       },
       error: (error: any) => {
-        this.spinner.hide();
+        console.error(error);
         this.toastr.error('Erro ao Carregar os Eventos', 'Erro!');
-      },
-      complete: () => this.spinner.hide()
-    });
+      }
+    }).add(() => this.spinner.hide());
   }
 
-  public openModal(template: TemplateRef<any>): void {
+  public openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
+    event.stopPropagation();
+    this.eventoId = eventoId;      //stop page propagation. stays on the same page after click
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
   public confirm(): void {
     this.modalRef.hide();
-    this.toastr.success('O Evento foi deletado com sucesso!', 'Deletado!');
+    this.spinner.show();
+
+    this.eventoService.deleteEvento(this.eventoId).subscribe({
+      next: (result: any) => {
+        if(result.message === 'Deletado'){
+          this.toastr.success('O Evento foi deletado com sucesso!', 'Deletado!');
+          this.loadEvents();
+        }
+      },
+      error: (error: any) => {
+        console.error(error);
+        this.toastr.error(`Erro ao tentar deletar o evento ${this.eventoId}`, 'Erro');
+      }
+    }).add(() => this.spinner.hide());
   }
 
   public decline(): void {
@@ -90,5 +105,4 @@ export class EventoListaComponent implements OnInit {
   public detalheEvento(id: number): void {
     this.router.navigate([`eventos/detalhe/${id}`]);
   }
-
 }

@@ -10,6 +10,7 @@ namespace ProEventos.Application.Dtos
     {
         public int Id { get; set; }
         public string Local { get; set; }
+        [DataType(DataType.Date)]
         public string DataEvento { get; set; }
 
         [Required(ErrorMessage ="O campo {0} é obrigatório.")]

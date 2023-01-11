@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 import { Constants } from '../util/constants';
+import * as moment from 'moment'
 
 @Pipe({
   name: 'DateTimeFormat'
@@ -8,7 +9,9 @@ import { Constants } from '../util/constants';
 export class DateTimeFormatPipe extends DatePipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    return super.transform(value, Constants.DATE_TIME_FMT);
+    const dateMoment: moment.Moment = moment(value, 'DD/MM/YYYY hh:mm');
+    const dateJS: Date = dateMoment.toDate();
+    return super.transform(dateJS, Constants.DATE_TIME_FMT);
   }
 
 }
