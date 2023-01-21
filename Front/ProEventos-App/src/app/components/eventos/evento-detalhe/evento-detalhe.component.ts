@@ -11,6 +11,7 @@ import { Lote } from '@app/models/Lote';
 import { EventoService } from '@app/services/evento.service';
 import { LoteService } from '@app/services/lote.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { environment } from '@enviroments/environment';
 @Component({
   selector: 'app-evento-detalhe',
   templateUrl: './evento-detalhe.component.html',
@@ -23,7 +24,9 @@ export class EventoDetalheComponent implements OnInit {
   form!: FormGroup;
   event = {} as Evento;
   saveModeState: string = 'post';
-  currentLote = {id: 0, name: '', index: 0}
+  currentLote = {id: 0, name: '', index: 0};
+  imageURL = 'assets/img/upload.png';
+  file: File;
 
   constructor(private fb: FormBuilder,
               private localeService: BsLocaleService,
@@ -39,7 +42,7 @@ export class EventoDetalheComponent implements OnInit {
     this.localeService.use('pt-br')
   }
 
-  public editMode(): boolean {
+  get editMode(): boolean {
     if(this.saveModeState === 'put') return true  // edit mode
     return false;                            // add mode
   }
@@ -88,9 +91,10 @@ export class EventoDetalheComponent implements OnInit {
         next: (event: Evento) => {            //the returned value by getEventoById is the 'next' param
           this.event = {...event};       //using spread operator to set the variable content to a field
           this.form.patchValue(this.event);
-          this.event.lotes.forEach(lote => {
-            this.lotes.push(this.createLote(lote))
-          });
+          if(this.event.imagemURL !== ''){
+            this.imageURL = environment.apiURL + '/resources/images/' + this.event.imagemURL;
+          }
+          this.loadBatch();
         },
         error: (error: any) => {
           this.spinner.hide();
@@ -102,6 +106,12 @@ export class EventoDetalheComponent implements OnInit {
     }
   }
 
+  public loadBatch(): void {
+    this.event.lotes.forEach(lote => {
+      this.lotes.push(this.createLote(lote))
+    });
+  }
+
   public validation(): void {
     this.form = this.fb.group({
       tema: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
@@ -110,7 +120,7 @@ export class EventoDetalheComponent implements OnInit {
       qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
       telefone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      imagemURL: ['', Validators.required],
+      imagemURL: [''],
       lotes: this.fb.array([])
     })
   }
@@ -207,5 +217,30 @@ export class EventoDetalheComponent implements OnInit {
 
   public declineDeleteLote(): void {
     this.modalRef.hide();
+  }
+
+  public onFileChange(ev: any): void {
+    const reader = new FileReader();
+
+    reader.onload = (event: any) => this.imageURL = event.target.result;
+
+    this.file = ev.target.files;
+    reader.readAsDataURL(this.file[0]);
+
+    this.uploadImage();
+  }
+
+  public uploadImage() {
+    this.spinner.show();
+    this.eventoService.postUpload(this.eventoId, this.file).subscribe(
+      () => {
+        this.loadEvent();
+        this.toastr.success('Imagem atualizada com Sucesso', 'Sucesso!');
+      },
+      (error: any) => {
+        this.toastr.error('Erro ao fazer uploado de imagem', 'Erro!');
+        console.error(error);
+      }
+    ).add(() => {this.spinner.hide()});
   }
 }

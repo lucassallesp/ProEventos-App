@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Evento } from '@app/models/Evento';
 import { EventoService } from '@app/services/evento.service';
+import { environment } from '@enviroments/environment';
 
 @Component({
   selector: 'app-evento-lista',
@@ -18,6 +19,7 @@ export class EventoListaComponent implements OnInit {
   public filteredEvents: Evento[] = [];
   public eventoId: number = 0;
 
+  public heightValue = 100;
   public widthValue = 150;
   public marginValue = 2;
   public isShowing = true;
@@ -52,8 +54,6 @@ export class EventoListaComponent implements OnInit {
       event =>
         event.tema.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
         event.local.toLocaleLowerCase().indexOf(filterBy) !== -1
-        // event.lotes.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
-        // event.dataEvento.toLocaleLowerCase().indexOf(filterBy) !== -1
     );
   }
 
@@ -103,5 +103,11 @@ export class EventoListaComponent implements OnInit {
 
   public detalheEvento(id: number): void {
     this.router.navigate([`eventos/detalhe/${id}`]);
+  }
+
+  public showImage(imagemURL: string): string {
+    return (imagemURL !== '')
+      ? `${environment.apiURL}/resources/images/${imagemURL}`
+      : 'assets/img/semImagem.jpg';
   }
 }

@@ -1,11 +1,10 @@
-<div class="card rounded shadow-sm p-3">
+<div class="card rounded shadow-sm p-3 mb-3">
   <div class="d-flex">
     <div class="flex-fill pr-3">
       <div class="input-group mb-2">
         <div class="input-group-prepended">
           <div class="input-group-text">Filtrar: </div>
         </div>
-
         <input
         type="text"
         class="form-control"
@@ -44,9 +43,10 @@
       <td class="d-none d-md-table-cell">
         <img [collapse]="!isShowing"
           [isAnimated]="true"
-          src="/assets/{{event.imagemURL}}"
+          [src]="showImage(event.imagemURL)"
           [style.width.px] = "widthValue"
           [style.margin.px] = "marginValue"
+          [style.height.px] = "heightValue"
         >
       </td>
       <td>{{event.id}}</td>
