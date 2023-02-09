@@ -44,7 +44,7 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<UserDto> CreateAccountAsync(UserDto userDto)
+        public async Task<UserUpdateDto> CreateAccountAsync(UserDto userDto)
         {
             try
             {
@@ -54,7 +54,8 @@ namespace ProEventos.Application
                 if(result.Succeeded){
                     //re-mapping to userToReturn to not expose the domain to the API.
                     //the API must only see the Application layer.
-                    var userToReturn = _mapper.Map<UserDto>(user);
+                    var userToReturn = _mapper.Map<UserUpdateDto>(user);  
+                                 
                     return userToReturn;
                 }
 
@@ -89,11 +90,15 @@ namespace ProEventos.Application
                 var user = await _userPersist.GetUsersByUserNameAsync(userUpdateDto.UserName);
                 if(user == null) return null;
 
+                userUpdateDto.Id = user.Id;
+
                 _mapper.Map(userUpdateDto, user);
 
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);
-
+                if(userUpdateDto.Password != null){
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var result = await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);    
+                }
+                
                 _userPersist.Update<User>(user);
 
                 if(await _userPersist.SaveChangesAsync())

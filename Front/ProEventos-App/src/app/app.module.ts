@@ -1,6 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -19,7 +19,6 @@ import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { NgxCurrencyModule } from 'ngx-currency';
 
-import { EventoService } from './services/evento.service';
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
 import { EventosComponent } from './components/eventos/eventos.component';
 import { PalestrantesComponent } from './components/palestrantes/palestrantes.component';
@@ -30,9 +29,15 @@ import { TituloComponent } from './shared/titulo/titulo.component';
 import { EventoDetalheComponent } from './components/eventos/evento-detalhe/evento-detalhe.component';
 import { EventoListaComponent } from './components/eventos/evento-lista/evento-lista.component';
 import { UserComponent } from './components/user/user.component';
+import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegistrationComponent } from './components/user/registration/registration.component';
+
+import { EventoService } from './services/evento.service';
 import { LoteService } from './services/lote.service';
+import { AccountService } from './services/account.service';
+
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 
 defineLocale('pt-br', ptBrLocale);
@@ -40,6 +45,7 @@ defineLocale('pt-br', ptBrLocale);
   declarations: [
     AppComponent,
     EventosComponent,
+    HomeComponent,
     PalestrantesComponent,
     DashboardComponent,
     ContatosComponent,
@@ -78,9 +84,10 @@ defineLocale('pt-br', ptBrLocale);
   ],
   providers: [
     EventoService,
-    LoteService
+    LoteService,
+    AccountService,
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi:true},
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule { }
