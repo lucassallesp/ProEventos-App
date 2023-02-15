@@ -6,6 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Evento } from '@app/models/Evento';
 import { EventoService } from '@app/services/evento.service';
 import { environment } from '@enviroments/environment';
+import { PaginatedResult, Pagination } from '@app/models/Pagination';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-evento-lista',
@@ -16,23 +19,15 @@ export class EventoListaComponent implements OnInit {
 
   modalRef = {} as BsModalRef;
   public events: Evento[] = [];
-  public filteredEvents: Evento[] = [];
   public eventoId: number = 0;
+  public pagination = {} as Pagination;
 
   public heightValue = 100;
   public widthValue = 150;
   public marginValue = 2;
   public isShowing = true;
-  private listFiltered = '';
 
-  public get listFilter(): string {
-    return this.listFiltered;
-  }
-
-  public set listFilter(value: string) {
-    this.listFiltered = value;
-    this.filteredEvents = this.listFilter ? this.filterEvents(this.listFilter) : this.events;
-  }
+  termoBuscaChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private eventoService: EventoService,
@@ -43,18 +38,33 @@ export class EventoListaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.spinner.show();
+    this.pagination = {currentPage: 1, itemsPerPage: 3, totalItems: 2} as Pagination;
     this.loadEvents();
   }
 
-  public filterEvents(filterBy: string): Evento[] {
-    filterBy = filterBy.toLocaleLowerCase();
-
-    return this.events.filter(
-      event =>
-        event.tema.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
-        event.local.toLocaleLowerCase().indexOf(filterBy) !== -1
-    );
+  public filterEvents(evt: any): void {
+    if(this.termoBuscaChanged.observers.length === 0){
+      this.termoBuscaChanged.pipe(debounceTime(1500)).subscribe(
+        filterBy => {
+          this.spinner.show()
+          this.eventoService.getEventos(
+          this.pagination.currentPage,
+          this.pagination.itemsPerPage,
+          evt.value
+        ).subscribe(
+          (paginatedResult: PaginatedResult<Evento[]>) => {
+            this.events = paginatedResult.result;
+            this.pagination = paginatedResult.pagination;
+          },
+          (error: any) => {
+            this.spinner.hide();
+            this.toastr.error('Erro ao Carregar os Eventos', 'Erro!');
+          }
+        ).add(() => this.spinner.hide());
+        }
+      )
+    }
+    this.termoBuscaChanged.next(evt.value);
   }
 
   public changeImage() : void{
@@ -62,16 +72,19 @@ export class EventoListaComponent implements OnInit {
   }
 
   public loadEvents() : void {
-    this.eventoService.getEventos().subscribe({
-      next: (eventsResp: Evento[]) => {
-        this.events = eventsResp;
-        this.filteredEvents = this.events;
+    this.spinner.show();
+
+    this.eventoService.getEventos(this.pagination.currentPage,
+                                  this.pagination.itemsPerPage).subscribe(
+      (paginatedResult: PaginatedResult<Evento[]>) => {
+        this.events = paginatedResult.result;
+        this.pagination = paginatedResult.pagination;
       },
-      error: (error: any) => {
-        console.error(error);
+      (error: any) => {
+        this.spinner.hide();
         this.toastr.error('Erro ao Carregar os Eventos', 'Erro!');
       }
-    }).add(() => this.spinner.hide());
+    ).add(() => this.spinner.hide());
   }
 
   public openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
@@ -80,21 +93,26 @@ export class EventoListaComponent implements OnInit {
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
+  public pageChanged(event): void {
+    this.pagination.currentPage = event.page
+    this.loadEvents();
+  }
+
   public confirm(): void {
     this.modalRef.hide();
     this.spinner.show();
-    this.eventoService.deleteEvento(this.eventoId).subscribe({
-      next: (result: any) => {
+    this.eventoService.deleteEvento(this.eventoId).subscribe(
+      (result: any) => {
         if(result.message === 'Deletado'){
           this.toastr.success('O Evento foi deletado com sucesso!', 'Deletado!');
           this.loadEvents();
         }
       },
-      error: (error: any) => {
+      (error: any) => {
         console.error(error);
         this.toastr.error(`Erro ao tentar deletar o evento ${this.eventoId}`, 'Erro');
       }
-    }).add(() => this.spinner.hide());
+    ).add(() => this.spinner.hide());
   }
 
   public decline(): void {
