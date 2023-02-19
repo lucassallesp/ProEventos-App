@@ -25,6 +25,11 @@ namespace ProEventos.API.Helpers
 
             imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssfff")}{Path.GetExtension(imageFile.FileName)}";
 
+            if(!Directory.Exists(Path.Combine(_hostEnvironment.ContentRootPath, @$"Resources/{destino}")))
+            {
+                Directory.CreateDirectory(Path.Combine(_hostEnvironment.ContentRootPath, @$"Resources/{destino}"));
+            }
+
             var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @$"Resources/{destino}", imageName);
 
             using(var fileStream = new FileStream(imagePath, FileMode.Create))
@@ -35,12 +40,14 @@ namespace ProEventos.API.Helpers
             return imageName;
         }
 
-        public void DeleteImage(string imageFile, string destino)
+        public void DeleteImage(string imageName, string destino)
         {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @$"Resources/{destino}", imageFile);
-
-            if(System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
+            if (!string.IsNullOrEmpty(imageName)) 
+            {
+                var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @$"Resources/{destino}", imageName);
+                if (System.IO.File.Exists(imagePath))
+                    System.IO.File.Delete(imagePath);
+            }
         }
     }
 }

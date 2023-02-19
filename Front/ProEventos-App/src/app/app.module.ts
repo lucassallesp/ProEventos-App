@@ -15,6 +15,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { NgxCurrencyModule } from 'ngx-currency';
@@ -33,12 +34,17 @@ import { UserComponent } from './components/user/user.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegistrationComponent } from './components/user/registration/registration.component';
-
 import { EventoService } from './services/evento.service';
 import { LoteService } from './services/lote.service';
 import { AccountService } from './services/account.service';
 
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { PerfilDetalheComponent } from './components/user/perfil/perfil-detalhe/perfil-detalhe.component';
+import { PalestranteListaComponent } from './components/palestrantes/palestrante-lista/palestrante-lista.component';
+import { PalestranteService } from './services/palestrante.service';
+import { PalestranteDetalheComponent } from './components/palestrantes/palestrante-detalhe/palestrante-detalhe.component';
+import { RedesSociaisComponent } from './components/redesSociais/redesSociais.component';
+
 
 
 defineLocale('pt-br', ptBrLocale);
@@ -48,9 +54,13 @@ defineLocale('pt-br', ptBrLocale);
     EventosComponent,
     HomeComponent,
     PalestrantesComponent,
+    PalestranteListaComponent,
+    PalestranteDetalheComponent,
+    RedesSociaisComponent,
     DashboardComponent,
     ContatosComponent,
     PerfilComponent,
+    PerfilDetalheComponent,
     DateTimeFormatPipe,
     NavComponent,
     TituloComponent,
@@ -68,6 +78,7 @@ defineLocale('pt-br', ptBrLocale);
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    TabsModule.forRoot(),
     PaginationModule.forRoot(),
     CollapseModule.forRoot(),
     TooltipModule.forRoot(),
@@ -88,6 +99,7 @@ defineLocale('pt-br', ptBrLocale);
     EventoService,
     LoteService,
     AccountService,
+    PalestranteService,
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi:true},
   ],
   bootstrap: [AppComponent],

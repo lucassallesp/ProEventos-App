@@ -103,8 +103,6 @@
 
     <!--SEÇÃO DE LOTES -->
     <div class="card rounded shadow-sm mt-3" *ngIf="editMode">
-          <!-- <p>Form value: {{form.controls.lotes.value | json}}</p>
-          <p>Form valid: {{form.controls.lotes.status | json}}</p> -->
       <div class="p-3">
         <div class="d-flex border-bottom">
           <h2 class="mr-auto">
@@ -208,6 +206,22 @@
     </div>
 
     </div>
+
+    <!--SEÇÃO DE REDES SOCIAIS -->
+    <div class="card rounded shadow-sm mt-3" *ngIf="editMode">
+      <div class="p-3">
+        <div class="d-flex border-bottom">
+          <h2 class="mr-auto">
+            Redes Sociais do Evento
+          </h2>
+          <h2>
+            <i class="fas fa-share-square"></i>
+          </h2>
+        </div>
+        <app-redesSociais [eventoId]="eventoId"></app-redesSociais>
+      </div>
+    </div>
+
     <br>
   </div>
 
@@ -247,9 +261,6 @@
                 <i class=""></i>
               </a>
             </div>
-            <!--div class="col-md-4 d-flex justify-content-center">
-              <a href="#" class="btn btn-outline-primary">Participar</a>
-            </div-->
           </div>
         </div>
       </div>

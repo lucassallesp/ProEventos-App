@@ -39,7 +39,7 @@ export class EventoListaComponent implements OnInit {
 
   ngOnInit(): void {
     this.pagination = {currentPage: 1, itemsPerPage: 3, totalItems: 2} as Pagination;
-    this.loadEvents();
+    this.carregarEventos();
   }
 
   public filterEvents(evt: any): void {
@@ -71,7 +71,7 @@ export class EventoListaComponent implements OnInit {
     this.isShowing = !this.isShowing;
   }
 
-  public loadEvents() : void {
+  public carregarEventos() : void {
     this.spinner.show();
 
     this.eventoService.getEventos(this.pagination.currentPage,
@@ -95,7 +95,7 @@ export class EventoListaComponent implements OnInit {
 
   public pageChanged(event): void {
     this.pagination.currentPage = event.page
-    this.loadEvents();
+    this.carregarEventos();
   }
 
   public confirm(): void {
@@ -105,7 +105,7 @@ export class EventoListaComponent implements OnInit {
       (result: any) => {
         if(result.message === 'Deletado'){
           this.toastr.success('O Evento foi deletado com sucesso!', 'Deletado!');
-          this.loadEvents();
+          this.carregarEventos();
         }
       },
       (error: any) => {
